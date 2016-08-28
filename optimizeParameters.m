@@ -44,33 +44,24 @@ for honing = 1:4;
             srvRange = [min(L_store(:,2)),max(L_store(:,2))];
             mobRange = [min(L_store(:,3)),max(L_store(:,3))];
             % N_max = 100000;
-        figure(1)
+        muTauVsRMSPlot = figure(1);
         hold on;
         plot(L_store(:,3).*L_store(:,1)*10^4,RMS_store,'o');
         xlabel('Mu-tau value (in cm^2/V');ylabel('RMS')
         title('RMS')
-        muTauVsRMSPlot = gcf
-        figure(2)
+        
+        muTauVsRlightPlot = figure(2);
         hold on;
         plot(L_store(:,1).*L_store(:,3)*10^4,RlightCalculate,'o');
         title('Rlight Calculated')
         xlabel('Mu-Tau value (in cm^2/V)');ylabel('Rlight')
-        muTauVsRlightPlot = gcf
         
         % At the end, you have 50 "best fits". You can plot them all, or just save
         % the best one. 
         [heart,ih] = min(RMS_store);
         % Print out the best set of parameters and the corresponding error:
-%         bestTau(honing) = L_store(ih,1);
-%         bestSRV(honing) = L_store(ih,2);
-%         bestMu(honing) = L_store(ih,3);
-%         heart;
-% If this is commented out of the 4 loop, there is only one final result.
-
-%end
-bestTau = L_store(ih,1);
-bestSRV = L_store(ih,2);
-bestMu = L_store(ih,3);
-heart;
-
+            bestTau = L_store(ih,1);
+            bestSRV = L_store(ih,2);
+            bestMu = L_store(ih,3);
+            heart;
 end
