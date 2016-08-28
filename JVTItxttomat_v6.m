@@ -16,13 +16,15 @@
 % currently we assume it is: name_IVT_####K_ill#_....
 % Tbstart and Tbfinish values are acquired from the Header of the files
 %==========================================================================
-%function [] = JVTItxttomat_v6(name)
+% If calling from main.m have this a function; if using separetely comment
+% that out and request the name.
+function [] = JVTItxttomat_v6(name)
 % request sample name from user
-name = input('What is the sample name? ', 's');
+%name = input('What is the sample name? ', 's');
 length_name = length(name);
 
 % folder where VI files live should have format name_IVTraw/
-folder_name = [name '_IVTrawtwo/']; %may need to keep _IVT in "name"
+folder_name = [name '_IVTraw/']; %may need to keep _IVT in "name"
 
 % make a list of all files in the folder 
 fileList = dir(folder_name);
@@ -49,24 +51,39 @@ j = 0;
 for i = 1:number_of_files
     
     % first set of characters in file name should be the same as the name
-    if length(fileList(i).name) < length(fileList(4).name)-1
+    % the following if loops will get rid of all the wrong files.
+    
+    if length(fileList(i).name) < length(fileList(4).name)-10
         % there are two random files with name '.' probably related to the 
         % file system. This ignores all files that aren't data files.
         
         warning(['File is too short. Filename is: ' fileList(i).name ' Skipping this file.'])
         
-    elseif strcmp(fileList(i).name(1:length_name), name) && ...
-           ~strcmp(fileList(i).name(length_name + 2:length_name + 4),'CFG')%CFG part might not be necessary anymore
-        % these files are all named correctly
-
+    elseif isstrprop(fileList(i).name(1),'alpha') == 0
+        % the files do not have the same name as the sample or the names
+        % are formatted improperly (not starting with the name of the
+        % sample but with a . or _ )
+        warning(['User input sample name is ' name ' but name of file is ' ...
+            fileList(i).name '. Skipping this file.'])
+        
+        % These ignore the summary files that might be generated with the
+        % data, but aren't needed for the analysis.
+    elseif strfind(fileList(i).name, 'SUMMARY') > 0 
+        warning(['Not data. Skipping this file.'])
+        
+    elseif strfind(fileList(i).name, 'temp') > 0
+        warning(['Not data. Skipping this file.'])
+        
+    % Now there remain only the correctly formatted files for analysis.
 % =========================================================================
 % Find indices in string to designate the temperature and illumination
 % index, uses the surounding string formating
 % =========================================================================   
-
+    else   
     % for dark and normal, T starts at 3rd underscore, ill starts at 4th
     % underscore. for testing filters, T starts at 4th and ill starts at
-    % 5th
+    % 5th. depending on the file name, the location of the underscores
+    % might need to be changed.
         underscores = strfind(fileList(i).name, '_');
         % only searches for K after the first underscore, to avoid
         % confusion with filename
@@ -87,7 +104,7 @@ for i = 1:number_of_files
 
         T_temp = str2num(fileList(i).name(temp_index_begin:temp_index_end))/100;
 
-        if i == 1
+        if i == 3
            T1 = T_temp;
            Ti = 1; % we need this to initialize Ti
 
@@ -112,7 +129,7 @@ for i = 1:number_of_files
         ill_new = ill_temp+1;
         %making illumination list
         
-        if i == 1
+        if i == 3
            ill1 = ill_new;
            illi = 1; % we need this to initialize illi
            
@@ -136,8 +153,7 @@ for i = 1:number_of_files
         startRowVI = 9; % or 17? Will need to know where IV measurements start
         startRowT = 4; % or 7? Don't know if second Enter line will be read
         
-        dataArray = importdata([folder_name fileList(i).name],',');
-        
+        dataArray = importdata([folder_name fileList(i).name(1:end)],',');
         V = dataArray.data(:,1);
         I = dataArray.data(:, 2);
         
@@ -152,16 +168,7 @@ for i = 1:number_of_files
         VI1(Ti, ill1(illi), 2) = {I};
         VI1(Ti, ill1(illi), 3) = {TA}; 
         VI1(Ti, ill1(illi), 4) = {TB}; 
-    
-    
-    
-    
-    else
-        % the files do not have the same name as the sample or the names
-        % are formatted improperly
-        warning(['User input sample name is ' name ' but name of file is ' ...
-            fileList(i).name '. Skipping this file.'])
-    
+        
     end
     
 end
@@ -302,7 +309,7 @@ save(['DataAnalysis/' name '_extracted.mat'], 'name', 'T', 'ill1', 'VI')
 % you can open this as a struture by sample_name1 = load(name.mat), and then the
 % everthing will be available as sample_name1.T, sample_name1.ill sample_name.VI ect...that
 % way you could load more than one sample at the same time
-%
+end
 % =========================================================================
 % Notes for code improvement
 
@@ -312,7 +319,7 @@ save(['DataAnalysis/' name '_extracted.mat'], 'name', 'T', 'ill1', 'VI')
 
 
 %fix JVTraw from file name
-%expand to multiple figuers and make subplots
+%expand to multiple figures and make subplots
 %illumination value is title of each subplot
 %have temp bar in legend to associate temp to color
 
