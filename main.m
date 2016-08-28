@@ -118,17 +118,17 @@ fullEnergyFlux = newLightSpectrum(first:cutOff,:);
 % name up until _IVTraw.
 name = input('What is the sample name? ', 's');
 % 
-% % Then Lenahan's code is called.
-% if isempty(strfind(name, '_')) == 1
-%     %this means that there is no _ in the name
-%     JVTItxttomat_v6(name)
-%     disp('name')
-% else JVTItxttomat_v5_SnSoDarkAndFilters(name)
-%     disp('underscore')
-% end
-% % This file analyzes the JTVI data and makes a summary file.
-% 
-% extractedResistance_v4_forv5(name)
+% Then Lenahan's code is called.
+if isempty(strfind(name, '_')) == 1
+    %this means that there is no _ in the name
+    JVTItxttomat_v6(name)
+    disp('name')
+else JVTItxttomat_v5_SnSoDarkAndFilters(name)
+    disp('underscore')
+end
+% This file analyzes the JTVI data and makes a summary file.
+
+extractedResistance_v4_forv5(name)
 % This file extracts the light and dark resistances.To read the file, we 
 % need to give the correct pathway.
 path = 'DataAnalysis/';
@@ -222,7 +222,7 @@ for iT=1:Tn
         % base for an iterative processes to find better estimations of the
         % individual values of each wanted variable. 
 
-        % Using Riley's code for optimizing three parameters, tau, srv, and mu
+        % Using Brandt's code for optimizing three parameters, tau, srv, and mu
         % guesses are tested iteratively by trying to minimize the difference
         % between the Rlight that was gained experimentally and the Rlight that can
         % be calculated from the mu and tau values.
@@ -307,14 +307,11 @@ for iT=1:Tn
                  title('Abs(deltaR) for srv(2)')
                  xlabel('Mu value (in cm^2/(Vs))');ylabel('Tau value (in s)');
         end
-        % Now the range can be narrowed around the best values and the
-        % process can restart for the following iterations (if more than 1 iteration).
+        % Now the range can be narrowed around the best values.
                     tauRange = [0.9*bestTau,1.1*bestTau];
                     srvRange = [0.9*bestSRV,1.1*bestSRV];
                     muRange = [0.9*bestMu,1.1*bestMu];
                     [bestTau bestSRV bestMu] = optimizeParameters(tauRange,srvRange,mobRange,N_max,N_store);
-                %end
-            %end
 
             % These are the final best values, and the mu-tau product associated.
             bestTau;
