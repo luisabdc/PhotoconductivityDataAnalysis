@@ -8,7 +8,9 @@
 %  (When there is an additional _ in the name)
 % =========================================================================
 %% 
-% FOR GsAs SAMPLE -> MUST CHANGE DIMENSIONS
+% MUST CHANGE DIMENSIONS for different samples
+% If calling from main.m have this a function; if using separetely comment
+% that out and request the name.
 function [] = extractedResistance_v4_forv5(name)
 
 % request sample name from user
@@ -29,11 +31,11 @@ ill = sample.ill1;
 % full list of optical density percentages from Si calibration
 G_ODpercent = [0,1.25,0.365,0.107,0.0200,0.0032,0.000647,1.12,0.329,0.0967,0.0181,0.00289,0.00059,0.834,0.245,0.0716,0.0134,0.00214,0.000446,0.617,0.184,0.0548,0.0103,0.00165,0.000351,0.506,0.153,0.0457,0.00857,0.00138,0.0003,0.296,0.0887,0.0268,0.00499,0.000819,0.000195]; 
 
-thickness = 10^-6; %[µm = 10^-6 m]     % Device thickness
+thickness = 10^-6; %[Âµm = 10^-6 m]     % Device thickness
 
 % Device properties -> SnS
 area = thickness*7.22*10^-3; %[m^2]    % Device area. Thickness * Width of bar
-deviceLength = 750*10^-6; %[µm = 10^-6 m]    % Device Length
+deviceLength = 750*10^-6; %[Âµm = 10^-6 m]    % Device Length
 
 % Device properties -> GaAs
 % area = thickness*10.4*10^-3;
@@ -74,7 +76,7 @@ end % temp loop
 
 resistivity = RList.*(area/deviceLength); %[Ohm*m]
 
-% acquiring mu*Tau product in simplest case without Luisa's code
+% acquiring mu*Tau product in simplest case
 sigma = 1./resistivity; % [1/Ohm*m] Area is infinite
 
 % sigma needs to subtract background dark current
@@ -164,7 +166,7 @@ end
 %     IllLegend = {num2str(G_OD(2)*100),num2str(G_OD(3)*100),num2str(G_OD(4)*100),num2str(G_OD(6)*100),num2str(G_OD(7)*100),num2str(G_OD(9)*100),num2str(G_OD(10)*100)};
 %     legend(IllLegend)
 %     xlabel('Temperature [K]')
-%     ylabel('Log10(µ?) [cm^2/V]')
+%     ylabel('Log10(Âµ?) [cm^2/V]')
 %     
 % end
 % 
@@ -185,7 +187,7 @@ end
 %     plot(log10(G_ODPlot4),muTauiPlot4,PlotStyle1{Tindex})
 %     legend(TLegend)
 %     xlabel('Log10(Illumination) [%]')
-%     ylabel('Log10(µ?) [cm^2/V]')
+%     ylabel('Log10(Âµ?) [cm^2/V]')
 % end
 
 % =========================================================================
@@ -224,8 +226,8 @@ end
 % Purpose of Code
 % =========================================================================
 
-% make intensity vector corresponoding to illumination values to get
+% make intensity vector corresponding to illumination values to get
 % appropriate value of G, generation rate
 % illumination values need to have 2 subtracted from them to go back to
-% origional values (check within files for true values, not title)
-% Luisa will need [Sheet Resistance, Illumination]
+% original values (check within files for true values, not title)
+% Barrera will need [Sheet Resistance, Illumination]
