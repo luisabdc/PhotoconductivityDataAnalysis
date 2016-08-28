@@ -16,6 +16,8 @@
 % currently we assume it is: name_description_IVT_####K_ill#_....
 % Tbstart and Tbfinish values are acquired from the Header of the files
 %==========================================================================
+% If calling from main.m have this a function; if using separetely comment
+% that out and request the name.
 function [] = JVTItxttomat_v5_SnSoDarkAndFilters(name)
 % request sample name from user
 %name = input('What is the sample name? ', 's');
@@ -49,17 +51,30 @@ j = 0;
 for i = 1:number_of_files
     
     % first set of characters in file name should be the same as the name
-    if length(fileList(i).name) < length(fileList(4).name)-1
+    % the following if loops will get rid of all the wrong files.
+    
+    if length(fileList(i).name) < length(fileList(4).name)-10
         % there are two random files with name '.' probably related to the 
         % file system. This ignores all files that aren't data files.
         
         warning(['File is too short. Filename is: ' fileList(i).name ' Skipping this file.'])
-
         
-    elseif strcmp(fileList(i).name(1:length_name), name) && ...
-           ~strcmp(fileList(i).name(length_name + 2:length_name + 4),'CFG')%CFG part might not be necessary anymore
-        % these files are all named correctly
-   
+    elseif isstrprop(fileList(i).name(1),'alpha') == 0
+        % the files do not have the same name as the sample or the names
+        % are formatted improperly (not starting with the name of the
+        % sample but with a . or _ )
+        warning(['User input sample name is ' name ' but name of file is ' ...
+            fileList(i).name '. Skipping this file.'])
+        
+        % These ignore the summary files that might be generated with the
+        % data, but aren't needed for the analysis.
+    elseif strfind(fileList(i).name, 'SUMMARY') > 0 
+        warning(['Not data. Skipping this file.'])
+        
+    elseif strfind(fileList(i).name, 'temp') > 0
+        warning(['Not data. Skipping this file.'])
+        
+    % Now there remain only the correctly formatted files for analysis.
 % =========================================================================
 % Find indices in string to designate the temperature and illumination
 % index, uses the surounding string formating
