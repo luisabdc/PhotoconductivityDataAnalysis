@@ -140,10 +140,10 @@ sample = load([path name '_summary.mat']);
 % a specific temeperature, which is considered the simplified version here,
 % or consider all of the temperatures and illuminations and vary them
 % iteratively to get a complete sense of the data.
-temperature = sample.T(1);
-Tn = length(sample.T(1));
-illumination = sample.ill(2);
-In = length(sample.ill(2));
+temperature = sample.T;
+Tn = length(sample.T);
+illumination = sample.ill;
+In = length(sample.ill);
 % For the simplified version, instead of taking all of sample.T and
 % sample.ill, take sample.T(number) and sample.ill(number) and apply this
 % also in Tn and In. The loop will still work.
@@ -165,7 +165,7 @@ for iT=1:Tn
     specificT = temperature(iT);
     T = round(specificT*100,0);
     Tindex = find(temperature == specificT);
-    for iI = 1:In % starting from 2 to avoid dark/dark comparison
+    for iI = 2:In % starting from 2 to avoid dark/dark comparison
         itcount = itcount+1;
         specificIll = illumination(iI);
         Iindex = find(illumination == specificIll);
